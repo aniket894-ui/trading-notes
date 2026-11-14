@@ -1,0 +1,27 @@
+test,tday,time_et,side,level,level_px,entry,stop,target,risk_pts,lots,result,exit,exit_et,R,usd
+NEW 1 - 5m engulfing at level,2026-10-26,04:55,Short,Asia high,4032.9,4030.6,4035.8,4020.2,5.2,5,loss,4035.8,10-26 08:25,-1.0,-275.0
+NEW 1 - 5m engulfing at level,2026-10-27,04:05,Short,VAL,4011.5,4009.6,4015.0,3998.8,5.4,5,loss,4015.0,10-27 05:05,-1.0,-285.0
+NEW 1 - 5m engulfing at level,2026-10-29,03:10,Short,VAL,4046.0,4045.2,4049.6,4036.4,4.4,5,win,4036.4,10-29 03:50,2.0,425.0
+NEW 1 - 5m engulfing at level,2026-11-04,03:30,Long,Asia high,4039.2,4043.6,4037.0,4056.8,6.6,4,win,4056.8,11-04 04:05,2.0,516.0
+NEW 2 - 15m rejection wick at level,2026-09-08,04:30,Short,VAL,4439.5,4437.1,4443.0,4425.3,5.9,5,loss,4443.0,09-08 05:15,-1.0,-310.0
+NEW 2 - 15m rejection wick at level,2026-09-09,03:15,Long,Asia high,4450.0,4451.4,4446.4,4461.4,5.0,5,loss,4446.4,09-09 04:15,-1.0,-265.0
+NEW 2 - 15m rejection wick at level,2026-09-21,03:45,Short,Asia low,4383.5,4381.5,4387.4,4369.7,5.9,5,loss,4387.4,09-21 04:00,-1.0,-310.0
+NEW 2 - 15m rejection wick at level,2026-09-23,03:15,Short,Asia low,4363.0,4360.5,4365.6,4350.3,5.1,5,win,4350.3,09-23 05:30,2.0,495.0
+NEW 2 - 15m rejection wick at level,2026-09-24,04:00,Short,VAL,4312.5,4311.6,4320.5,4293.8,8.9,3,win,4293.8,09-24 05:00,2.0,525.0
+NEW 2 - 15m rejection wick at level,2026-10-05,03:45,Short,Asia high,4191.2,4189.0,4195.1,4176.8,6.1,4,loss,4195.1,10-05 04:00,-1.0,-256.0
+NEW 2 - 15m rejection wick at level,2026-10-12,04:15,Long,VAL,4200.5,4200.7,4198.8,4204.5,1.9,5,loss,4198.8,10-12 04:45,-1.0,-110.0
+NEW 2 - 15m rejection wick at level,2026-10-14,04:15,Short,VAL,4176.0,4173.3,4181.1,4157.7,7.8,3,win,4157.7,10-14 08:30,2.0,459.0
+NEW 2 - 15m rejection wick at level,2026-10-26,04:45,Short,Asia high,4032.9,4030.6,4036.3,4019.2,5.7,5,loss,4036.3,10-26 08:15,-1.0,-300.0
+NEW 2 - 15m rejection wick at level,2026-10-27,04:00,Short,Asia low,4009.5,4009.2,4015.0,3997.6,5.8,5,loss,4015.0,10-27 05:00,-1.0,-305.0
+NEW 2 - 15m rejection wick at level,2026-10-29,03:00,Short,VAL,4046.0,4045.2,4049.6,4036.4,4.4,5,win,4036.4,10-29 03:45,2.0,425.0
+NEW 2 - 15m rejection wick at level,2026-10-29,04:15,Short,VAL,4046.0,4042.5,4046.5,4034.5,4.0,5,win,4034.5,10-29 04:45,2.0,385.0
+REF A - 15m sweep & reclaim (Rulebook),2026-09-29,03:15,Short,Asia high,4179.5,4177.9,4180.5,4172.7,2.6,5,loss,4180.5,09-29 03:30,-1.0,-145.0
+REF A - 15m sweep & reclaim (Rulebook),2026-10-05,03:45,Short,Asia high,4191.2,4189.0,4195.1,4176.8,6.1,4,loss,4195.1,10-05 04:00,-1.0,-256.0
+REF A - 15m sweep & reclaim (Rulebook),2026-10-05,04:30,Short,Asia high,4191.2,4190.7,4196.2,4179.7,5.5,5,loss,4196.2,10-05 04:45,-1.0,-290.0
+REF A - 15m sweep & reclaim (Rulebook),2026-10-26,04:45,Short,Asia high,4032.9,4030.6,4036.3,4019.2,5.7,5,loss,4036.3,10-26 08:15,-1.0,-300.0
+REF B - 15m VAH/VAL close back inside (Rulebook),2026-10-01,03:30,Long,VAL,4192.0,4193.1,4183.9,4211.5,9.2,3,loss,4183.9,10-01 04:30,-1.0,-285.0
+REF B - 15m VAH/VAL close back inside (Rulebook),2026-10-12,04:15,Long,VAL,4200.5,4200.7,4198.8,4204.5,1.9,5,loss,4198.8,10-12 04:45,-1.0,-110.0
+"NEW 2 - 15m wick, 5m window only",2026-10-26,04:45,Short,Asia high,4032.9,4030.6,4036.3,4019.2,5.7,5,loss,4036.3,10-26 08:15,-1.0,-300.0
+"NEW 2 - 15m wick, 5m window only",2026-10-27,04:00,Short,Asia low,4009.5,4009.2,4015.0,3997.6,5.8,5,loss,4015.0,10-27 05:00,-1.0,-305.0
+"NEW 2 - 15m wick, 5m window only",2026-10-29,03:00,Short,VAL,4046.0,4045.2,4049.6,4036.4,4.4,5,win,4036.4,10-29 03:45,2.0,425.0
+"NEW 2 - 15m wick, 5m window only",2026-10-29,04:15,Short,VAL,4046.0,4042.5,4046.5,4034.5,4.0,5,win,4034.5,10-29 04:45,2.0,385.0

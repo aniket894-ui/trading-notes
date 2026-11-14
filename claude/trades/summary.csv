@@ -1,0 +1,16 @@
+Test,Side,From,To,Trades,Wins,Losses,Win,R,Net,DD,AvgLots
+NEW 1 - 5m engulfing at level,All,2026-10-21,2026-11-13,4,2,2,0.5,2.0,381.0,-560.0,4.75
+NEW 1 - 5m engulfing at level,Shorts,2026-10-21,2026-11-13,3,1,2,0.3333333333333333,0.0,-135.0,-560.0,5.0
+NEW 1 - 5m engulfing at level,Longs,2026-10-21,2026-11-13,1,1,0,1.0,2.0,516.0,0.0,4.0
+NEW 2 - 15m rejection wick at level,All,2026-09-02,2026-11-13,12,5,7,0.4166666666666667,3.0,433.0,-885.0,4.583333333333333
+NEW 2 - 15m rejection wick at level,Shorts,2026-09-02,2026-11-13,10,5,5,0.5,5.0,808.0,-620.0,4.5
+NEW 2 - 15m rejection wick at level,Longs,2026-09-02,2026-11-13,2,0,2,0.0,-2.0,-375.0,-375.0,5.0
+REF A - 15m sweep & reclaim (Rulebook),All,2026-09-02,2026-11-13,4,0,4,0.0,-4.0,-991.0,-991.0,4.75
+REF A - 15m sweep & reclaim (Rulebook),Shorts,2026-09-02,2026-11-13,4,0,4,0.0,-4.0,-991.0,-991.0,4.75
+REF A - 15m sweep & reclaim (Rulebook),Longs,2026-09-02,2026-11-13,0,0,0,,0.0,0.0,0.0,
+REF B - 15m VAH/VAL close back inside (Rulebook),All,2026-09-02,2026-11-13,2,0,2,0.0,-2.0,-395.0,-395.0,4.0
+REF B - 15m VAH/VAL close back inside (Rulebook),Shorts,2026-09-02,2026-11-13,0,0,0,,0.0,0.0,0.0,
+REF B - 15m VAH/VAL close back inside (Rulebook),Longs,2026-09-02,2026-11-13,2,0,2,0.0,-2.0,-395.0,-395.0,4.0
+"NEW 2 - 15m wick, 5m window only",All,2026-10-21,2026-11-13,4,2,2,0.5,2.0,205.0,-605.0,5.0
+"NEW 2 - 15m wick, 5m window only",Shorts,2026-10-21,2026-11-13,4,2,2,0.5,2.0,205.0,-605.0,5.0
+"NEW 2 - 15m wick, 5m window only",Longs,2026-10-21,2026-11-13,0,0,0,,0.0,0.0,0.0,
