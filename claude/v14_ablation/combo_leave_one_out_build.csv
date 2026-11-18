@@ -1,0 +1,11 @@
+Removed,Trades,Win %,Net $,Profit factor,Max DD $,Longest losing streak,Verdict
+(none: full combo),18,77.8,5309.0,6.14,-292.0,1,
+S1 only real levels,15,73.3,4334.0,5.36,-452.0,2,still helps
+S2 add tested levels (2+ rejections),16,75.0,4209.0,5.08,-292.0,1,still helps
+S3 drop Asia high shorts,18,77.8,5309.0,6.14,-292.0,1,not needed in combo
+S7 VWAP side as trend,16,68.8,4300.0,4.17,-531.0,2,still helps
+S9 London only 3-5 AM,33,39.4,833.0,1.18,-2146.0,10,still helps
+S13b stop wick +2,21,52.4,3240.0,2.76,-438.0,3,still helps
+"E3 2 at 2R, runner BE to next structure, out 5 PM",18,77.8,5305.0,6.14,-292.0,1,not needed in combo
+S14 half risk after 3 losing days,18,77.8,5309.0,6.14,-292.0,1,not needed in combo
+S15 weekly loss cap $900,18,77.8,5309.0,6.14,-292.0,1,not needed in combo

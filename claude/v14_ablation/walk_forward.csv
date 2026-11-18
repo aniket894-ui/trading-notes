@@ -1,0 +1,5 @@
+System,Period,Trades,Win %,Net $,Profit factor,Max DD $,Longest losing streak
+BASE,TEST Oct 20 - Nov 13,21,38.1,520.0,1.18,-1027.0,4
+COMBINED,TEST Oct 20 - Nov 13,9,55.6,738.0,1.75,-386.0,1
+BASE,BUILD Sep 1 - Oct 19,44,31.8,-1706.0,0.77,-3504.0,9
+COMBINED,BUILD Sep 1 - Oct 19,18,77.8,5309.0,6.14,-292.0,1
