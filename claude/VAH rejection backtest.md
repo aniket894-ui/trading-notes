@@ -185,3 +185,144 @@ Not financial advice. This is 2.5 months of one falling market, with an approxim
 - `claude/vah_rejection/grid.csv`, `by_test.csv`, `by_level.csv`: the tables above, for every trend × window combination
 - `claude/vah_rejection/levels.csv`: every level with its active period
 - Rerun: `python3 backtest/vah_rejection.py` (about 1 minute)
+
+
+---
+
+# v13 add-on: stop-hunt check and wider stops (Nov 18, 2026)
+
+"v13" = this VAH rejection backtest. Code: `backtest/stop_hunt.py` (run after `backtest/vah_rejection.py`). Same data, period (Sep 1 – Nov 13, 2026) and signals as above. Base case = stop at wick + 0.5, target 2R.
+
+## How it's measured (assumptions)
+
+1. **Losing trade = stopped out at the base stop.** Trades that closed at the end of the day with a loss were never stopped, so they aren't included.
+2. **"Reached the original 2R target"** is checked from the bar *after* the stop bar. Inside the stop bar there's no way to know whether the high or the low came first.
+   - **Within 4 hours:** bars that open before the stop bar's close + 4 hours. This can run past 17:00 into the next session.
+   - **Same day:** bars up to the 17:00 ET close of that trading day.
+3. **"Points past the stop before reversing"** = the furthest price went beyond the stop, from the stop bar until the 2R target was touched (if it was, the same day) or until the end of the trading day (if not). For trades that later hit 2R, this is the extra room the stop would have needed.
+4. **Wider stops:** same entries. Stop = wick + 0.5 (base), + 1, + 2, + 3 points. **The target moves to 2R of the new, wider risk.** Lots = floor($300 ÷ (stop pts × $10)), still capped at 5, so a few tight trades risk under $300. $3 fees per contract.
+5. **Max drawdown:** every signal is taken and P&L is booked in entry-time order. Overlapping trades are allowed, as in v13.
+6. **The universe is v13's:** trigger candle inside 18:00–16:00. The wick + 0.5 rows reproduce v13 exactly (shorts any time: 181 signals, +6.8R, +$373).
+
+## Results
+
+### Stop-hunt overview
+
+| Side | Window  Losers | Hit 2R within 4h | Hit 2R same day | Median pts past stop (all losers) | Median pts past stop (hunted only) |
+|---|---|--:|--:|--:|--:|--:|
+| Short | Any 18-16 | 110 | 39 (35%) | 50 (45%) | 11.2 | 6.5 |
+| Short | 03-11 | 38 | 16 (42%) | 20 (53%) | 14.9 | 5.8 |
+| Short | London 03-05 | 7 | 3 (43%) | 4 (57%) | 18.5 | 5.2 |
+| Long | Any 18-16 | 138 | 46 (33%) | 63 (46%) | 14.3 | 6.7 |
+| Long | 03-11 | 59 | 21 (36%) | 27 (46%) | 18.5 | 7.2 |
+| Long | London 03-05 | 11 | 3 (27%) | 5 (45%) | 30.3 | 8.0 |
+
+### Stop hunts by level type (any time 18–16)
+
+| Side | Level  Losers | Hit 2R within 4h | Hit 2R same day | Median pts past stop (all losers) | Median pts past stop (hunted only) |
+|---|---|--:|--:|--:|--:|--:|
+| Short | 1H swing high | 11 | 5 (45%) | 7 (64%) | 21.1 | 8.6 |
+| Short | 1H swing low | 1 | 1 (100%) | 1 (100%) | 1.2 | 1.2 |
+| Short | Asia high | 6 | 1 (17%) | 1 (17%) | 26.2 | 33.4 |
+| Short | Asia low | 4 | 1 (25%) | 1 (25%) | 4.9 | 4.2 |
+| Short | PD POC | 15 | 6 (40%) | 9 (60%) | 8.6 | 6.0 |
+| Short | PD VAH | 18 | 7 (39%) | 9 (50%) | 19.2 | 7.5 |
+| Short | PD VAL | 11 | 2 (18%) | 2 (18%) | 27.5 | 1.0 |
+| Short | PD high | 3 | 1 (33%) | 1 (33%) | 21.6 | 7.4 |
+| Short | PD low | 9 | 4 (44%) | 4 (44%) | 8.0 | 2.6 |
+| Short | PW POC | 2 | 2 (100%) | 2 (100%) | 5.6 | 5.6 |
+| Short | PW VAH | 12 | 2 (17%) | 3 (25%) | 5.0 | 6.2 |
+| Short | PW VAL | 12 | 5 (42%) | 7 (58%) | 7.4 | 7.4 |
+| Short | PW low | 6 | 2 (33%) | 3 (50%) | 9.2 | 2.2 |
+| Long | 1H swing low | 17 | 9 (53%) | 10 (59%) | 14.3 | 7.0 |
+| Long | Asia high | 11 | 4 (36%) | 5 (45%) | 5.8 | 5.8 |
+| Long | Asia low | 8 | 5 (62%) | 5 (62%) | 5.8 | 4.7 |
+| Long | PD POC | 14 | 6 (43%) | 8 (57%) | 15.2 | 4.0 |
+| Long | PD VAH | 16 | 3 (19%) | 6 (38%) | 5.7 | 5.5 |
+| Long | PD VAL | 32 | 11 (34%) | 16 (50%) | 22.8 | 10.2 |
+| Long | PD high | 2 | 1 (50%) | 1 (50%) | 18.8 | 20.2 |
+| Long | PD low | 11 | 1 (9%) | 3 (27%) | 40.2 | 7.2 |
+| Long | PW POC | 3 | 0 (0%) | 1 (33%) | 43.5 | 4.2 |
+| Long | PW VAH | 7 | 1 (14%) | 1 (14%) | 18.5 | 0.6 |
+| Long | PW VAL | 10 | 4 (40%) | 5 (50%) | 20.6 | 20.3 |
+| Long | PW high | 1 | 0 (0%) | 0 (0%) | 62.2 | – |
+| Long | PW low | 6 | 1 (17%) | 2 (33%) | 10.8 | 4.4 |
+
+### Stop hunts by touch number (any time 18–16)
+
+| Side | Test  Losers | Hit 2R within 4h | Hit 2R same day | Median pts past stop (all losers) | Median pts past stop (hunted only) |
+|---|---|--:|--:|--:|--:|--:|
+| Short | 1 | 12 | 5 (42%) | 7 (58%) | 17.2 | 8.8 |
+| Short | 2 | 39 | 13 (33%) | 18 (46%) | 11.7 | 5.8 |
+| Short | 3 | 21 | 5 (24%) | 5 (24%) | 12.1 | 6.0 |
+| Short | 4 | 16 | 7 (44%) | 9 (56%) | 8.8 | 6.2 |
+| Short | 5+ | 22 | 9 (41%) | 11 (50%) | 10.0 | 7.4 |
+| Long | 1 | 17 | 7 (41%) | 10 (59%) | 14.3 | 10.2 |
+| Long | 2 | 47 | 18 (38%) | 25 (53%) | 17.9 | 5.8 |
+| Long | 3 | 33 | 12 (36%) | 15 (45%) | 10.1 | 5.6 |
+| Long | 4 | 21 | 4 (19%) | 5 (24%) | 13.3 | 10.3 |
+| Long | 5+ | 20 | 5 (25%) | 8 (40%) | 18.1 | 4.3 |
+
+### How far past the stop the hunted trades went (both sides, hit 2R same day)
+
+| Points past stop | Trades |
+|---|--:|
+| ≤0.5 | 5 |
+| 0.5–1.5 | 19 |
+| 1.5–2.5 | 9 |
+| 2.5–5 | 14 |
+| 5–10 | 27 |
+| >10 | 39 |
+
+### Wider stops, $300 risk (lots recalculated), target 2R of the new risk
+
+| Side | Window | Stop | Signals | Win % | Total R | Net $ | Max drawdown | Avg lots |
+|---|---|---|--:|--:|--:|--:|--:|--:|
+| Short | Any 18-16 | wick + 0.5 | 181 | 31% | +6.8 | +$373 | −$5,872 | 3.86 |
+|  |  | wick + 1 | 181 | 30% | +7.6 | +$687 | −$5,833 | 3.71 |
+|  |  | wick + 2 | 181 | 29% | +6.8 | −$252 | −$5,737 | 3.38 |
+|  |  | wick + 3 | 181 | 29% | +12.3 | +$2,378 | −$5,716 | 2.99 |
+| Short | 03-11 | wick + 0.5 | 65 | 38% | +13.9 | +$3,289 | −$1,542 | 3.57 |
+|  |  | wick + 1 | 65 | 37% | +11.8 | +$2,939 | −$1,455 | 3.43 |
+|  |  | wick + 2 | 65 | 38% | +15.9 | +$3,558 | −$1,598 | 3.12 |
+|  |  | wick + 3 | 65 | 35% | +9.9 | +$2,130 | −$1,799 | 2.82 |
+| Short | London 03-05 | wick + 0.5 | 18 | 61% | +15.0 | +$3,491 | −$795 | 4.22 |
+|  |  | wick + 1 | 18 | 56% | +12.0 | +$2,708 | −$1,127 | 4.06 |
+|  |  | wick + 2 | 18 | 67% | +18.0 | +$4,496 | −$781 | 3.72 |
+|  |  | wick + 3 | 18 | 50% | +9.0 | +$2,252 | −$809 | 3.22 |
+| Long | Any 18-16 | wick + 0.5 | 196 | 23% | -44.5 | −$14,472 | −$14,472 | 3.76 |
+|  |  | wick + 1 | 196 | 24% | -36.8 | −$13,307 | −$13,477 | 3.61 |
+|  |  | wick + 2 | 196 | 24% | -33.3 | −$11,092 | −$11,092 | 3.30 |
+|  |  | wick + 3 | 196 | 20% | -42.2 | −$11,695 | −$11,875 | 2.93 |
+| Long | 03-11 | wick + 0.5 | 78 | 23% | -23.1 | −$7,332 | −$8,621 | 3.86 |
+|  |  | wick + 1 | 78 | 24% | -18.1 | −$6,113 | −$8,001 | 3.72 |
+|  |  | wick + 2 | 78 | 20% | -25.6 | −$7,808 | −$9,355 | 3.40 |
+|  |  | wick + 3 | 78 | 18% | -30.6 | −$8,216 | −$9,377 | 3.01 |
+| Long | London 03-05 | wick + 0.5 | 17 | 35% | +1.0 | −$822 | −$1,610 | 4.35 |
+|  |  | wick + 1 | 17 | 35% | +1.0 | −$584 | −$1,452 | 4.24 |
+|  |  | wick + 2 | 17 | 24% | -5.0 | −$1,473 | −$2,016 | 3.88 |
+|  |  | wick + 3 | 17 | 24% | -5.0 | −$1,686 | −$2,088 | 3.59 |
+
+
+## Validation
+
+- The base rows match v13 exactly for every side and window.
+- Hand-checked one hunted trade: **short Sep 6 21:45** at a 1H swing low on its 2nd test. Entry 4455.7, stop 4464.2, 2R target 4438.7. The stop was hit at 22:30 (high 4465.0), and price went 1.2 points past it (22:45 high 4465.4). Price then hit the 2R target at 02:00 (low 4430.6), inside the 4-hour window that ends at 02:45. A wick + 2 stop (4465.7) would have survived, and its target (4435.7) was also hit.
+- I caught and fixed two bugs in my first run: the short target was placed above entry, and signals outside 18:00–16:00 were included. The numbers above are after the fix.
+
+## What it says
+
+- **Many stops look like hunts on paper.** 45% of stopped shorts (50 of 110) and 46% of stopped longs (63 of 138) still reached the original 2R target the same day. 35% and 33% did it within 4 hours.
+- **But most of them went too far past the stop for a small widening to save them.** Hunted trades went a median 6.5 points past the stop for shorts and 6.7 for longs. Only 33 of 113 hunted trades went 2.5 points or less past it, which is the extra room a wick + 3 stop gives over the base wick + 0.5.
+- **Wider stops didn't consistently help.** For shorts at any time, net $ went +$373 → +$687 → −$252 → +$2,378 for + 0.5 / + 1 / + 2 / + 3. That isn't a trend, it's noise: each wider stop also pushes the 2R target further away, and drawdown stayed around −$5,700 to −$5,900. London shorts were best at wick + 2 (+$4,496, 67% win, −$781 drawdown), but that's 18 trades, where a single extra winner makes the difference. Longs lost at every width.
+- **By level (shorts):** stops at PD POC (9 of 15), 1H swing highs (7 of 11) and PW VAL (7 of 12) were often hunts, meaning the idea was right but the stop was too tight. Stops at Asia high (1 of 6) and PD VAL (2 of 11) were rarely hunts, meaning those trades were simply wrong.
+- **By touch (shorts):** 3rd-touch losers were hunted least (5 of 21, 24%). When a 3rd test failed, it usually kept going. 1st- and 4th-touch losers were hunted more than half the time.
+- **Bottom line:** most of these losers weren't hunts that a slightly wider stop would have saved. A fixed 1–3 point widening isn't a fix. If you want to act on this, the level split is the lead to follow: tight stops at POCs and swing highs got hunted, while Asia high and PD VAL losses were real. That's 2.5 months of data, so treat it as a lead to test, not a rule.
+
+## Files
+
+- `claude/vah_rejection/stop_hunt_losers.csv`: every stopped trade with stop time, 2R target, hit within 4h / same day, points past the stop
+- `claude/vah_rejection/hunt_overview.csv`, `hunt_by_level.csv`, `hunt_by_test.csv`, `hunt_depth.csv`
+- `claude/vah_rejection/wider_stops.csv`, and `signals_wider_stops.csv` (each signal's R, $ and lots at every stop width)
+
+The spec is still cut off at "Skip if", so exits and sizing remain the placeholders listed at the top.
