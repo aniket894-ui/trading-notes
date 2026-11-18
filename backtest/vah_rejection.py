@@ -17,6 +17,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "claude" / "vah_rejection"
+DATA_DIR = ROOT / "data"     # full-year runs point this at data/full
 
 BIN = 0.1            # volume-at-price bin
 VA_PCT = 0.70
@@ -37,7 +38,7 @@ TRENDS = ["none", "4H EMA20", "Daily EMA20"]
 # ------------------------------------------------------------------ bars
 
 def load(name):
-    df = pd.read_csv(ROOT / "data" / name)
+    df = pd.read_csv(DATA_DIR / name)
     df["et"] = pd.to_datetime(df["time_et"])
     df["tday"] = (df["et"] + pd.Timedelta(hours=6)).dt.normalize()
     return df
@@ -112,7 +113,9 @@ def fractals(df, kind_prefix):
     return out
 
 
-def build_levels(m15, h1, h4, d1):
+def build_levels(m15, h1, h4, d1, pbars=None):
+    """pbars: optional 1m bars (with tday) used for the volume profiles instead of 15m."""
+    pday = {d: g for d, g in pbars.groupby("tday")} if pbars is not None else None
     lv = []
     days = sorted(m15["tday"].unique())
     # a trading day is complete in the 15m file if it has its 18:00 bar
@@ -123,7 +126,7 @@ def build_levels(m15, h1, h4, d1):
         d_start = d - pd.Timedelta(hours=6)
         if i > 0 and days[i - 1] in full:
             prev = by_day[days[i - 1]]
-            poc, vah, val = profile(prev)
+            poc, vah, val = profile(pday.get(days[i - 1], prev) if pday is not None else prev)
             for n, p in [("PD POC", poc), ("PD VAH", vah), ("PD VAL", val),
                          ("PD high", prev["high"].max()), ("PD low", prev["low"].min())]:
                 lv.append(dict(name=n, px=round(p, 1), start=d_start, end=d_end))
@@ -144,7 +147,12 @@ def build_levels(m15, h1, h4, d1):
             continue                      # prior week must be complete in the 15m file
         w_start = weeks[i] - pd.Timedelta(hours=6)
         w_end = weeks[i] + pd.Timedelta(days=4, hours=17)
-        poc, vah, val = profile(pw)
+        if pbars is not None:
+            wk_days = set(pw["tday"].unique())
+            pwp = pbars[pbars["tday"].isin(wk_days)]
+            poc, vah, val = profile(pwp if len(pwp) else pw)
+        else:
+            poc, vah, val = profile(pw)
         for n, p in [("PW POC", poc), ("PW VAH", vah), ("PW VAL", val),
                      ("PW high", pw["high"].max()), ("PW low", pw["low"].min())]:
             lv.append(dict(name=n, px=round(p, 1), start=w_start, end=w_end))

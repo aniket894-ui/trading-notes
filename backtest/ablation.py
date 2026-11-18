@@ -18,7 +18,8 @@ import vah_rejection as v13  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "claude" / "v14_ablation"
-BUILD_END = pd.Timestamp("2026-10-19")          # last trading day of BUILD
+BUILD_END = pd.Timestamp("2026-10-19")          # last trading day of BUILD (full-year runs override)
+START_DAY = pd.Timestamp("2026-09-01")          # first trading day traded (full-year runs override)
 TICK, PT_USD, FEE = 0.1, 10.0, 1.50             # $1.50 per contract round trip
 SLIP = 1 * TICK                                 # 1 tick on entries, stops and market exits; none on limit targets
 NEWS_FILE = ROOT / "data" / "news_days.csv"      # one column 'date' (YYYY-MM-DD); not available yet
@@ -47,6 +48,7 @@ class Cfg:
     max_lots: int = 5
     max_trades: int = 2
     max_losses: int = 2
+    side: str = "both"           # both | Short | Long (Short/Long = separate account)
 
 
 # ------------------------------------------------------------------ prepare data once
@@ -56,7 +58,9 @@ def prepare():
     h1 = v13.load("MGC_1h.csv")
     h1, h4, d1, _ = v13.build_htf(h1)
     h1["ema20"] = h1["close"].ewm(span=20, adjust=False).mean()
-    L = v13.build_levels(m, h1, h4, d1)
+    m1_path = v13.DATA_DIR / "MGC_1m.csv"
+    pbars = v13.load("MGC_1m.csv") if m1_path.exists() else None   # 1m volume profile when available
+    L = v13.build_levels(m, h1, h4, d1, pbars=pbars)
     res, sup = v13.count_tests(m, L)
     end = m["et"] + pd.Timedelta(minutes=15)
     m["ema1h"] = [v13.last_done(h1, t, "ema20") for t in end]
@@ -170,7 +174,7 @@ def backtest(P, cfg, period):
     if cfg.skip_news and P["news"] is None:
         return None                                            # no verified news dates: not run
     days = m["tday"]
-    lo_day = pd.Timestamp("2026-09-01")
+    lo_day = START_DAY
     if period == "build":
         rng = (lo_day, BUILD_END)
     elif period == "test":
@@ -214,6 +218,8 @@ def backtest(P, cfg, period):
             continue
         entry_c = m.at[i, "close"]
         for d in (-1, 1):
+            if cfg.side != "both" and (d == -1) != (cfg.side == "Short"):
+                continue
             if state["n"] >= cfg.max_trades or i <= busy_until:
                 break
             ref = {"4H": "ema4h", "1H": "ema1h", "D": "emad", "VWAP": "vwap"}.get(cfg.trend)
