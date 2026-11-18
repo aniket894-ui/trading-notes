@@ -1,0 +1,11 @@
+step,trades,win_pct,net,change
+TradingView rules (Python),49,51.0,4911.0,
++ base window 03:00-11:00,49,51.0,4911.0,0.0
+"+ base trend filter (4H EMA20, both sides)",29,27.6,-1368.0,-6279.0
+"+ base levels (PD/PW/Asia/1H swing, touch 1-3, any candle color)",71,32.4,-1887.0,-519.0
+"+ base fills (close +1 tick, 2R off entry)",71,32.4,-1947.0,-60.0
++ no 15-pt stop cap,74,35.1,615.0,2562.0
+"+ base sizing ($300 risk, 3-5 lots)",67,32.8,-1736.0,-2351.0
++ base fees ($1.50/contract),67,32.8,-1882.0,-146.0
+"+ base exits (stop first, slippage, hold to 16:45)",65,33.8,-1186.0,696.0
++ base day count (holiday session not rolled),65,33.8,-1186.0,0.0
